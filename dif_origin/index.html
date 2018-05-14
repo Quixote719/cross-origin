@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jsonp example</title>
+    <!-- <script type="text/javascript" src="./jquery/dist/jquery.js"></script> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+        let url = 'http://localhost:3000/randomrequest';
+        let url2= 'http://localhost:4000/jsonprequest';
+        function clickgetData() {
+            let date = new Date().getTime().toString(); //时间戳避免304
+            // let xhr = new XMLHttpRequest();
+            // xhr.open('GET', 'http://localhost:3000/randomrequest?' + date, true);
+            // xhr.onload = function (e) {
+            //     document.getElementById("resGetData").innerHTML = xhr.responseText;
+            //     console.log('get data successful');
+            // };
+            // xhr.send('this is a CORS request!');
+            axios({
+            method:'get',
+            url: `${url}?${date}`,
+            // headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //   }
+          }).then(function(res){
+            console.log('get!');
+            document.getElementById("resGetData").innerHTML = res.data;
+            return res.data;
+          });
+        }
+        function clickputData() {
+            // let xhr = new XMLHttpRequest();
+            // xhr.open('PUT', 'http://localhost:3000/randomrequest', true);
+            // xhr.onload = function (e) {
+            //     document.getElementById("resPutData").innerHTML = xhr.responseText;
+            //     console.log('put data successful');
+            // };
+            // xhr.send('this is a CORS request!');
+            axios({
+            method:'put',
+            url: url,
+            // headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //   }
+          }).then(function(res){
+            console.log('put!');
+            document.getElementById("resPutData").innerHTML = res.data;
+            return res.data;
+          });
+        }
+
+        //axios不支持jsonp
+        function jsonpgetData(){
+          let date = new Date().getTime().toString();
+          $.ajax({
+              async : true,
+              url : url2,
+              type : "GET",
+              dataType : "jsonp", // 返回的数据类型，设置为JSONP方式
+              jsonp : 'callback', //指定一个查询参数名称来覆盖默认的 jsonp 回调参数名 callback
+              jsonpCallback: 'handleResponse', //设置回调函数名
+              success: function(response, status, xhr){
+                  console.log('状态为：' + status + ',状态是：' + xhr.statusText);
+                  console.log(response);
+              },
+              error: function(){
+                alert('ajax call failed');
+              }
+          });
+        }
+        function jsonpputData(){
+          let date = new Date().getTime().toString();
+          $.ajax({
+              async : true,
+              url : url2,
+              type : "PUT",
+              dataType : "jsonp", // 返回的数据类型，设置为JSONP方式
+              jsonp : 'callback', //指定一个查询参数名称来覆盖默认的 jsonp 回调参数名 callback
+              jsonpCallback: 'handleResponse', //设置回调函数名
+              success: function(response, status, xhr){
+                  console.log('状态为：' + status + ',状态是：' + xhr.statusText);
+                  console.log(response);
+              },
+              error: function(){
+                alert('ajax call failed');
+              }
+          });
+        }
+
+    </script>
+</head>
+
+<body>
+    <button id="cors" onclick="clickgetData()">send get request by cors</button>
+    <button id="cors2" onclick="clickputData()">send put request by cors</button>
+    <button id="jsonp" onclick="jsonpgetData()">send get request by jsonp</button>
+    <button id="jsonp2" onclick="jsonpputData()">send put request by jsonp</button>
+    <p id="resGetData"></p>
+    <p id="resPutData"></p>
+</body>
+
+</html>
